@@ -1,6 +1,5 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../../app/store';
 import { TaxBand, taxBands } from '../../types/TaxBand';
 
 interface CalculatorState {
