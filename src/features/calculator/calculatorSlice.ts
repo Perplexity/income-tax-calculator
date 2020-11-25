@@ -4,7 +4,7 @@ import { TaxBand, taxBands } from '../../types/TaxBand';
 
 //The interface for our state object.
 interface CalculatorState {
-    income: number
+    income: number | undefined
     taxBand: TaxBand | null | undefined //Value can also be null or undefined, as default value is null, and our 'getTaxBand' function can return 'undefined'
 }
 //Our initial state object
@@ -17,13 +17,17 @@ export const calculatorSlice = createSlice({
     name: 'calculator',
     initialState,
     reducers: {
-        setIncome: (state, action: PayloadAction<number>) => {
+        setIncome: (state, action: PayloadAction<number | undefined>) => {
             state.income = action.payload;
         },
         getTaxBand: state => {
             const { income } = state;
-            const taxBand = taxBands.find(band => income >= band.minThreshold && income <= band.maxThreshold); //Find a tax band by checking if our income fits between the min and max threshold.
-            state.taxBand = taxBand;
+            if (income) {
+                const taxBand = taxBands.find(band => income >= band.minThreshold && income <= band.maxThreshold); //Find a tax band by checking if our income fits between the min and max threshold.
+                state.taxBand = taxBand;
+            } else {
+                state.taxBand = null;
+            }
         }
     },
 });

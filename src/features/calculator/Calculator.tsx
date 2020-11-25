@@ -5,6 +5,7 @@ import { RootState } from '../../app/store';
 import { taxBands } from '../../types/TaxBand';
 import { getTaxBand, setIncome } from './calculatorSlice';
 import styles from './Calculator.module.css'; //Component styling
+import NumberFormat from 'react-number-format';
 
 export default () => {
     const dispatch = useDispatch();
@@ -17,10 +18,10 @@ export default () => {
                     <InputGroup.Prepend>
                         <InputGroup.Text>£</InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control type="number" min={0} max={1000000000000} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        dispatch(setIncome(parseInt(e.currentTarget.value))); //Set income to entered value.
+                    <NumberFormat value={state.income} displayType="input" thousandSeparator={true} onValueChange={(values) => {
+                        dispatch(setIncome(values.floatValue)); //Set income to entered value.
                         dispatch(getTaxBand()) //And then get our appropriate tax band.
-                    }}></Form.Control>
+                    }} />
                 </InputGroup>
             </Form.Group>
             {state.taxBand &&
@@ -37,16 +38,18 @@ export default () => {
                         </thead>
                         <tbody>
                             {taxBands.map(band => {
-                                const incomeLost = state.income * band.taxRate;
-                                const rowClass = band.id == state.taxBand?.id ? styles.selectedBand : ""; //Will highlight the tax band we fall into.
-                                return (
-                                    <tr className={rowClass}>
-                                        <td>{band.name}</td>
-                                        <td>{band.taxRate * 100}%</td>
-                                        <td style={{ color: "red" }}>-£{incomeLost}</td>
-                                        <td>£{state.income - incomeLost}</td>
-                                    </tr>
-                                )
+                                if (state.income) {
+                                    const incomeLost = state.income * band.taxRate;
+                                    const rowClass = band.id == state.taxBand?.id ? styles.selectedBand : ""; //Will highlight the tax band we fall into.
+                                    return (
+                                        <tr className={rowClass}>
+                                            <td>{band.name}</td>
+                                            <td>{band.taxRate * 100}%</td>
+                                            <td style={{ color: "red" }}>-<NumberFormat value={incomeLost} displayType="text" thousandSeparator={true} prefix="£" /></td>
+                                            <td style={{ color: "green" }}><NumberFormat value={state.income - incomeLost} displayType="text" thousandSeparator={true} prefix="£" /></td>
+                                        </tr>
+                                    )
+                                }
                             }
                             )}
                         </tbody>
