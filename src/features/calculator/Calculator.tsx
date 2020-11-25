@@ -42,7 +42,7 @@ export default () => {
                                     const incomeLost = state.income * band.taxRate;
                                     const rowClass = band.id == state.taxBand?.id ? styles.selectedBand : ""; //Will highlight the tax band we fall into.
                                     return (
-                                        <tr className={rowClass}>
+                                        <tr key={band.id} className={rowClass}>
                                             <td>{band.name}</td>
                                             <td>{band.taxRate * 100}%</td>
                                             <td style={{ color: "red" }}>-<NumberFormat value={incomeLost} displayType="text" thousandSeparator={true} prefix="£" /></td>
