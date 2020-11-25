@@ -23,3 +23,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.<br />
 And then the app is ready to be deployed!
+
+### 'yarn' is not recognized as an internal or external command
+
+If you encounter this, you need to execute the command `npm install -g yarn` to install yarn globally, and then follow the instructions above.
