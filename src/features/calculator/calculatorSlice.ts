@@ -33,6 +33,7 @@ export const calculatorSlice = createSlice({
             }
         },
         getNIContributions: state => {
+            //Calculates NI contributions based on user's annual income, as per https://www.moneyadviceservice.org.uk/en/articles/tax-and-national-insurance-deductions#how-much-can-you-earn-before-you-need-to-pay-national-insurance
             let niContributions = null;
             if (state.income) {
                 const weeklyIncome = state.income / 52;
