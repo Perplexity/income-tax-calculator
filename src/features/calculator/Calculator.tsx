@@ -3,13 +3,14 @@ import { Col, Form, InputGroup, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { taxBands } from '../../types/TaxBand';
-import { getTaxBand, setIncome } from './calculatorSlice';
+import { getNIContributions, getTaxBand, setIncome } from './calculatorSlice';
 import styles from './Calculator.module.css'; //Component styling
 import NumberFormat from 'react-number-format';
 
 export default () => {
     const dispatch = useDispatch();
     const state = useSelector((state: RootState) => state.calculator); //Selects the root state from the store and returns the calculator state.
+
     return (
         <Form>
             <Form.Group as={Col}>
@@ -18,9 +19,10 @@ export default () => {
                     <InputGroup.Prepend>
                         <InputGroup.Text>£</InputGroup.Text>
                     </InputGroup.Prepend>
-                    <NumberFormat value={state.income} displayType="input" thousandSeparator={true} onValueChange={(values) => {
+                    <NumberFormat value={state.income} displayType="input" thousandSeparator={true} decimalScale={2} onValueChange={(values) => {
                         dispatch(setIncome(values.floatValue)); //Set income to entered value.
                         dispatch(getTaxBand()) //And then get our appropriate tax band.
+                        dispatch(getNIContributions()) //And then get our NI contributions.
                     }} />
                 </InputGroup>
             </Form.Group>
@@ -45,13 +47,32 @@ export default () => {
                                         <tr key={band.id} className={rowClass}>
                                             <td>{band.name}</td>
                                             <td>{band.taxRate * 100}%</td>
-                                            <td style={{ color: "red" }}>-<NumberFormat value={incomeLost} displayType="text" thousandSeparator={true} prefix="£" /></td>
-                                            <td style={{ color: "green" }}><NumberFormat value={state.income - incomeLost} displayType="text" thousandSeparator={true} prefix="£" /></td>
+                                            <td style={{ color: "red" }}>-<NumberFormat value={incomeLost} displayType="text" thousandSeparator={true} prefix="£" decimalScale={2}/></td>
+                                            <td style={{ color: "green" }}><NumberFormat value={state.income - incomeLost} displayType="text" thousandSeparator={true} prefix="£" decimalScale={2} /></td>
                                         </tr>
                                     )
                                 }
                             }
                             )}
+                        </tbody>
+                    </Table>
+                </Form.Group>
+            }
+            {state.niContributions &&
+                <Form.Group as={Col}>
+                    <Form.Label>Your NI contributions</Form.Label>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Weekly contribution</th>
+                                <th>Yearly contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><NumberFormat value={state.niContributions.weekly} displayType="text" thousandSeparator={true} prefix="£" decimalScale={2} /></td>
+                                <td><NumberFormat value={state.niContributions.yearly} displayType="text" thousandSeparator={true} prefix="£" decimalScale={2} /></td>
+                            </tr>
                         </tbody>
                     </Table>
                 </Form.Group>
